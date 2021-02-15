@@ -4,12 +4,20 @@ import "./App.scss";
 
 function App() {
   const [photos, setPhotos] = useState([]);
+  const [text, setText] = useState("");
+
+  console.log(text);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    fetchPhotos();
+  }
 
   async function fetchPhotos() {
     try {
       const result = await axios.get(`https://api.pexels.com/v1/search`, {
         params: {
-          query: "Jesus",
+          query: text,
         },
         headers: {
           authorization:
@@ -25,19 +33,52 @@ function App() {
 
   useEffect(() => {
     fetchPhotos();
-  }, []);
+  }, [text]);
 
   return (
     <div className="App container">
-      {photos.map((data) => (
-        <div className="card" key={data.id}>
-          <img className="card-img-top" src={data.src.original} alt="nicee" />
-          <div className="card-body">
-            <p className="card-text">{data.photographer}</p>
+      <Input text={text} setText={setText} handleSubmit={handleSubmit} />
+      <div className="card-columns">
+        {photos.map((data) => (
+          <div className="card" key={data.id}>
+            <img className="card-img-top" src={data.src.medium} alt="nicee" />
+            <div className="card-body">
+              <p className="card-text">{data.photographer}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
+  );
+}
+
+function Input({ text, setText, handleSubmit }) {
+  // const [text, setText] = useState("");
+
+  // function handleSubmit(e) {
+  //   e.preventDefault();
+  // }
+  return (
+    <form className="my-4" onSubmit={handleSubmit}>
+      <div className="input-group">
+        <input
+          type="text"
+          onChange={(e) => setText(e.target.value)}
+          value={text}
+          className="form-control"
+          placeholder="Search images..."
+        />
+        <div className="input-group-append">
+          <button
+            className="btn btn-outline-secondary"
+            type="submit"
+            id="button-addon2"
+          >
+            Search
+          </button>
+        </div>
+      </div>
+    </form>
   );
 }
 
