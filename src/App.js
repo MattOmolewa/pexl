@@ -4,7 +4,8 @@ import "./App.scss";
 
 function App() {
   const [photos, setPhotos] = useState([]);
-  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [text, setText] = useState("furniture");
 
   console.log(text);
 
@@ -26,6 +27,7 @@ function App() {
       });
       console.log(result.data.photos);
       setPhotos(result.data.photos);
+      setLoading(false);
     } catch (error) {
       console.log(error.message);
     }
@@ -33,20 +35,27 @@ function App() {
 
   useEffect(() => {
     fetchPhotos();
-  }, [text]);
+  }, []);
 
   return (
     <div className="App container">
       <Input text={text} setText={setText} handleSubmit={handleSubmit} />
+
       <div className="card-columns">
-        {photos.map((data) => (
-          <div className="card" key={data.id}>
-            <img className="card-img-top" src={data.src.medium} alt="nicee" />
-            <div className="card-body">
-              <p className="card-text">{data.photographer}</p>
+        {loading ? (
+          <h3>loading...</h3>
+        ) : photos.length == 0 ? (
+          <h3 style={{ textAlign: "center" }}>Can't find image</h3>
+        ) : (
+          photos.map((data) => (
+            <div className="card" key={data.id}>
+              <img className="card-img-top" src={data.src.medium} alt="nicee" />
+              <div className="card-body">
+                <p className="card-text">{data.photographer}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
